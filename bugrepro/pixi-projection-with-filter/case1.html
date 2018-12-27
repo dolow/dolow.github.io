@@ -20,7 +20,6 @@
       document.body.appendChild(app.view);
 
       PIXI.loader.add([
-        {name:'particle', url: 'assets/particle.png'},
         {name:'irasutoya', url: 'assets/irasutoya.png'},
       ]).load((loader) => {
 
@@ -164,10 +163,6 @@
         var shader;
 
         UserImplements: {
-          var texture = loader.resources.particle.texture; // diff with case2
-          var plain = new PIXI.Sprite(texture);
-          app.stage.addChild(plain);
-
           shader = new PIXI.Filter(null, fragShader);
         }
 

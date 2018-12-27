@@ -14,7 +14,7 @@
       "  gl_FragColor = texture2D(uSampler, vTextureCoord);\n" +
       "}";
 
-    window.onload = () => {
+    window.onload = function() {
       var app = new PIXI.Application(800, 600, {backgroundColor: 0x103322});
       document.body.appendChild(app.view);
 
@@ -163,7 +163,8 @@
         var shader;
 
         UserImplements: {
-          var plain = new PIXI.Sprite(loader.resources.particle.texture);
+          var texture = loader.resources.irasutoya.texture; // diff with case1
+          var plain = new PIXI.Sprite(texture);
           app.stage.addChild(plain);
 
           shader = new PIXI.Filter(null, fragShader);

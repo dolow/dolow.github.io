@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, user-scalable=no" />
+  <script type='text/javascript' src='pixi.js'></script>
+  <script type='text/javascript' src='pixi-projection.js'></script>
+  <script type='text/javascript' src='pixi-layers.js'></script>
+<head/>
+<body>
+  <script type='text/javascript'>
+    var vertShader = "attribute vec2 aVertexPosition;\n" +
+      "attribute vec2 aTextureCoord;\n" +
+      "uniform mat3 projectionMatrix;\n" +
+      "uniform mat3 filterMatrix;\n" +
+      "varying vec2 vTextureCoord;\n" +
+      "varying vec2 vFilterCoord;\n" +
+      "void main(void) {\n" +
+      "  gl_Position = vec4((projectionMatrix * vec3(aVertexPosition, 1.0)).xy, 0.0, 1.0);\n" +
+      "  vFilterCoord = ( filterMatrix * vec3( aTextureCoord, 1.0)  ).xy;\n" +
+      "  vTextureCoord = aTextureCoord;\n" +
+      "}";
+    var fragShader = "precision mediump float;\n" +
+      "varying vec2 vTextureCoord;\n" +
+      "varying vec4 vColor;\n" +
+      "uniform sampler2D uSampler;\n" +
+      "uniform float uTime;\n" +
+      "float random(in vec2 _st) {\n" +
+      "  return fract(sin(dot(_st.xy, vec2(0.5, 0.5))) * 0.5);\n" +
+      "}\n" +
+      "float noise(in vec2 _st) {\n" +
+      "  vec2 i = floor(_st);\n" +
+      "  vec2 f = fract(_st);\n" +
+      "  float a = random(i);\n" +
+      "  float b = random(i + vec2(1.0, 0.0));\n" +
+      "  float c = random(i + vec2(0.0, 1.0));\n" +
+      "  float d = random(i + vec2(1.0, 1.0));\n" +
+      "  vec2 u = f * f * (3.0 - 2.0 * f);\n" +
+      "  return mix(a, b, u.x) + (c - a)* u.y * (1.0 - u.x) + (d - b) * u.x * u.y;\n" +
+      "}\n" +
+      "#define NUM_OCTAVES 5\n" +
+      "float fbm( in vec2 _st) {\n" +
+      "  float v = 0.0;\n" +
+      "  float a = 0.5;\n" +
+      "  vec2 shift = vec2(100.0);\n" +
+      "  mat2 rot = mat2(cos(0.5), sin(0.5), -sin(0.5), cos(0.50));\n" +
+      "  for (int i = 0; i < NUM_OCTAVES; ++i) {\n" +
+      "    v += a * noise(_st);\n" +
+      "    _st = rot * _st * 2.0 + shift;\n" +
+      "    a *= 0.5;\n" +
+      "  }\n" +
+      "  return v;\n" +
+      "}\n" +
+      "void main() {\n" +
+      "  vec4 baseCol = texture2D(uSampler, vTextureCoord);\n" +
+      "  vec2 resolution = vec2(128.0, 128.0);\n" +
+      "  vec2 st = gl_FragCoord.xy / resolution.xy * 3.;\n" +
+      "  vec3 color = vec3(0.0);\n" +
+      "  vec2 q = vec2(0.);\n" +
+      "  q.x = fbm(st + 0.00 * uTime);\n" +
+      "  q.y = fbm(st + vec2(1.0));\n" +
+      "  vec2 r = vec2(0.);\n" +
+      "  r.x = fbm(st + 1.0 * q + vec2(1.7,9.2)+ 0.15 * uTime);\n" +
+      "  r.y = fbm(st + 1.0 * q + vec2(8.3,2.8)+ 0.126 * uTime);\n" +
+      "  float f = fbm(st+r);\n" +
+      "  color = mix(\n" +
+      "    vec3(0.101961,0.619608,0.666667),\n" +
+      "    vec3(0.666667,0.666667,0.498039),\n" +
+      "    clamp((f*f)*4.0,0.0,1.0)\n" +
+      "  );\n" +
+      "  color = mix(color, vec3(0,0,0.164706), clamp(length(q),0.0,1.0));\n" +
+      "  color = mix(color, vec3(0.666667,1,1), clamp(length(r.x),0.0,1.0));\n" +
+      "  color = (f * f * f + .6 * f * f + .5 * f) * color;\n" +
+      "  color.rgb += baseCol.rgb * 0.75;\n" +
+      "  color.rgb *= baseCol.a;\n" +
+      "  gl_FragColor = vec4(color, baseCol.a);\n" +
+      "}";
+
+    window.onload = function() {
+      var app = new PIXI.Application(800, 1200, {resolution: 1, autoStart: false, antialias: true });
+      app.stage = new PIXI.display.Stage();
+      app.loader.baseUrl = 'assets';
+      document.body.appendChild(app.view);
+
+      var camera = new PIXI.projection.Camera3d();
+      var container = new PIXI.projection.Container3d();
+      var table = new PIXI.Sprite();
+      var card = new PIXI.projection.Container3d();
+      var inner = new PIXI.projection.Container3d();
+      var back = new PIXI.projection.Sprite3d();
+      var face = new PIXI.projection.Container3d();
+      var sprite = new PIXI.projection.Sprite3d();
+      var sprite2 = new PIXI.projection.Sprite3d();
+      var sprite3 = new PIXI.projection.Sprite3d();
+      var sprite4 = new PIXI.projection.Sprite3d();
+
+      camera.position.set(app.screen.width * 0.5, app.screen.height * 0.5);
+      camera.setPlanes(350, 30, 10000);
+      camera.euler.x = Math.PI / 5.5;
+      container.position3d.y = -50;
+      container.scale3d.set(1.5);
+      table.scale.set(2, 2);
+      table.anchor.set(0.5, 0.5);
+      table.position.set(app.screen.width * 0.5, app.screen.height * 0.5);
+      card.isFace = false;
+      card.scale3d.set(0.5);
+      card.interactive = true;
+      inner.euler.y = Math.PI;
+      back.anchor.set(0.5);
+      sprite2.y = -120;
+      sprite2.x = -80;
+      sprite3.y = 70;
+      sprite3.x = 40;
+      sprite4.y = -70;
+      sprite4.x = -100;
+      sprite.anchor.set(0.5);
+      sprite2.anchor.set(0.5);
+      sprite3.anchor.set(0.5);
+
+      /**
+       * Stage
+       *  |- camera (Camera3d)
+       *  |    - container (Container3d)
+       *  |        - card (Container3d)
+       *  |            - inner (Container3d)
+       *  |               |- back (Sprite3d) <-- FILTER APPLIED
+       *  |                - face (Container3d)
+       *  |                   |- sprite (Sprite3d)
+       *  |                   |- sprite2 (Sprite3d)
+       *  |                   |- sprite3 (Sprite3d)
+       *  |                    - sprite4 (Sprite3d)
+       *   - table (Sprite)
+       */
+      app.stage.addChild(camera);
+      app.stage.addChildAt(table, 0);
+      camera.addChild(container);
+      container.addChild(card);
+      card.addChild(inner);
+      inner.addChild(back);
+      inner.addChild(face);
+      face.addChild(sprite);
+      face.addChild(sprite2);
+      face.addChild(sprite3);
+      face.addChild(sprite4);
+
+      card.on('mouseup', () => { card.isFace = !card.isFace; });
+      card.on('touchend', () => { card.isFace = !card.isFace; });
+
+      // load assets
+      app.loader.add(['cards.json', 'table.png']).load(() => {
+        var tex = app.loader.resources['cards.json'].textures;
+        table.texture = app.loader.resources['table.png'].texture;
+
+        back.texture = tex["cover1.png"];
+        sprite.texture = tex['white1.png'];
+        sprite2.texture = tex["0_6.png"];
+        sprite3.texture = tex["2_big.png"];
+        sprite4.texture = tex["2_small.png"];
+
+        var shader = new PIXI.Filter(vertShader, fragShader, { uTime: { type: 'f', value: 0.0 }});
+        back.filters = [shader];
+
+        app.start();
+
+        app.ticker.add(function(deltaTime) {
+          var dt = deltaTime / 60.0;
+
+          if (card.isFace && inner.euler.y > 0)
+            inner.euler.y = Math.max(0, inner.euler.y - dt * 5);
+          if (!card.isFace && inner.euler.y < Math.PI)
+            inner.euler.y = Math.min(Math.PI, inner.euler.y + dt * 5);
+          inner.position3d.z = -Math.sin(inner.euler.y) * back.width;
+
+          var isFront = inner.isFrontFace();
+          back.renderable = !isFront;
+          face.renderable = isFront;
+
+          camera.updateTransform();
+
+          shader.uniforms.uTime += 0.1;
+        });
+      });
+    };
+  </script>
+</body>
+</html>

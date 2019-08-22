@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video with WebGL</title>
+  <script type='text/javascript' src='/samples/video/pixi.js'></script>
+  <script type='text/javascript'>
+    window.onload = function() {
+    var app = new PIXI.Application({ transparent: true });
+    document.body.appendChild(app.view);
+
+    var texture = PIXI.Texture.from('/samples/video/video.mp4');
+    var videoSprite = new PIXI.Sprite(texture);
+    videoSprite.width = app.screen.width;
+    videoSprite.height = app.screen.height;
+
+    setTimeout(function() { app.stage.addChild(videoSprite); }, 500);
+  };
+  </script>
+</head>
+<body>
+</body>
+</html>

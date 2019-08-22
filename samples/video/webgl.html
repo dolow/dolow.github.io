@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video with WebGL</title>
+  <script type='text/javascript' src='/samples/video/pixi.js'></script>
+  <script type='text/javascript'>
+    window.onload = function() {
+    var app = new PIXI.Application({ transparent: true });
+    document.body.appendChild(app.view);
+
+    var button = new PIXI.Graphics()
+        .beginFill(0x0, 0.5)
+        .drawRoundedRect(0, 0, 100, 100, 10)
+        .endFill()
+        .beginFill(0xffffff)
+        .moveTo(36, 30)
+        .lineTo(36, 70)
+        .lineTo(70, 50);
+
+    button.x = (app.screen.width - button.width) / 2;
+    button.y = (app.screen.height - button.height) / 2;
+
+    button.interactive = true;
+    button.buttonMode = true;
+
+    app.stage.addChild(button);
+
+    button.on('pointertap', function() {
+      button.destroy();
+
+      var texture = PIXI.Texture.from('/samples/video/video.mp4');
+      var videoSprite = new PIXI.Sprite(texture);
+      videoSprite.width = app.screen.width;
+      videoSprite.height = app.screen.height;
+
+      setTimeout(function() { app.stage.addChild(videoSprite); }, 500);
+    });
+  };
+  </script>
+</head>
+<body>
+</body>
+</html>

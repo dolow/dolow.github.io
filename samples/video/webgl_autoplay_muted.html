@@ -14,6 +14,8 @@
     videoSprite.width = app.screen.width;
     videoSprite.height = app.screen.height;
 
+    PIXI.utils.BaseTextureCache["/samples/video/video.mp4"].resource.source.muted = true
+
     setTimeout(function() { app.stage.addChild(videoSprite); }, 500);
   };
   </script>

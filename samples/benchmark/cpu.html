@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover'/>
+  <title>benchmark</title>
+  <script type='text/javascript' src='/samples/benchmark/pixi.js'></script>
+  <script type='text/javascript'>
+    window.onload = () => {
+      const params = new URLSearchParams(window.location.search);
+      const sampleCols = params.get('x') || 30;
+      const sampleRows = params.get('y') || 30;
+      const waveDistance = 50;
+
+      const assetName = '/samples/benchmark/animal_music_band.png';
+      const app = new PIXI.Application({
+        width: 320,
+        height: 518,
+        backgroundColor: 0x1099bb,
+        resolution: window.devicePixelRatio || 1
+      });
+      document.body.appendChild(app.view);
+      window.app = app;
+
+      class Scene extends PIXI.Container {
+        constructor(option) {
+          super(option);
+
+          this.container = new PIXI.Container();
+          this.addChild(this.container);
+
+          this.text = new PIXI.Text('placeholder', {fontFamily: 'Arial', fontSize: 32, fill: 'white'});
+          this.text.anchor.set(0.5);
+          this.text.x = app.screen.width / 2;
+          this.text.y = app.screen.height / 2;
+          this.addChild(this.text);
+
+          this.spreadFrames = 60;
+          this.duration = 600;
+
+          this.elapsedTime = 0;
+          this.counter = 0;
+
+          this.deltaTimes = [];
+
+          this.createDots();
+        }
+
+        createDots() {
+          for (let x = 0; x < sampleCols; x++) {
+            for (let y = 0; y < sampleRows; y++) {
+              const sample = new PIXI.Sprite(PIXI.utils.TextureCache[assetName]);
+              sample.position.x = x * 5;
+              sample.position.y = y * 5;
+              sample.scale.set(0.01, 0.01);
+              this.container.addChild(sample);
+              this.counter++;
+            }
+          }
+
+          this.text.text = this.counter;
+        }
+
+        update(deltaTime) {
+          if (this.elapsedTime >= this.duration) {
+            return;
+          }
+
+          this.elapsedTime += deltaTime;
+
+          this.deltaTimes.push(deltaTime);
+          if (this.spreadFrames > this.deltaTimes.length) {
+            return;
+          }
+
+          this.deltaTimes.shift();
+          const fps = 60 / this.deltaTimes.reduce((prev, current) => (prev + current)) * 60;
+          this.text.text = Math.round(fps);
+
+          if(this.elapsedTime >= this.duration) {
+            this.elapsedTime = this.duration
+            return;
+          }
+
+          const wave = Math.sin(this.elapsedTime * 0.1) * waveDistance + waveDistance;
+          this.container.position.set(wave, wave);
+        }
+      }
+
+      PIXI.loader.add([assetName]).load(() => {
+        const scene = new Scene()
+        app.stage.addChild(scene);
+        app.ticker.add((dt) => {
+          scene.update(dt);
+        })
+      });
+    };
+</script>
+</head>
+<body>
+</body>
+</html>

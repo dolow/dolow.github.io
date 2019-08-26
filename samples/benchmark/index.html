@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video</title>
+</head>
+<body>
+  <script type='text/javascript'>
+    function jumpToCpu() {
+      var x = document.getElementById('input-x').value;
+      var y = document.getElementById('input-y').value;
+      var query = '?x=' + x + '&y=' + y;
+      location.href = '/samples/benchmark/cpu.html' + query;
+    }
+  </script>
+  <h1>Index</h1>
+  <ul>
+    <li><a href='/samples/benchmark/rendering.html'>Rendering</a></li>
+    <li>
+      <a href='javascript: jumpToCpu();'>CPU</a>
+      x: <input id='input-x' type='text' style='width: 40px;' value='180' />
+      y: <input id='input-y' type='text' style='width: 40px;' value='180' />
+    </li>
+  </ul>
+</body>
+</html>

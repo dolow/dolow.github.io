@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video</title>
+</head>
+<body>
+  <h1 id='title'></h1>
+  <ul>
+    <li><input id='cookie-set' type='button' value='set cookie' /></li>
+    <li><input id='cookie-clear' type='button' value='clear cookie' /></li>
+    <li>
+      <input id='cookie-get' type='button' value='get current cookie value' />
+      <input id='cookie-value' type='text' style='width:200px;' />
+    </li>
+  </ul>
+  <script type='text/javascript'>
+    window.onload = function() {
+      document.getElementById('cookie-set').onclick = function() {
+        document.cookie = "saved_time=" + new Date().getTime();
+      };
+      document.getElementById('cookie-clear').onclick = function() {
+        var kvs = document.cookie.split('; ');
+        for (var i = 0; i < kvs.length; i++) {
+          var [key, _] = kvs[i].split('=');
+          document.cookie = key + "=;expires=" + new Date(0).toGMTString() + ";";
+        }
+      };
+      document.getElementById('cookie-get').onclick = function() {
+        document.getElementById('cookie-value').value = document.cookie;
+      };
+    };
+  </script>
+</body>
+</html>

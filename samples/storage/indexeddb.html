@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video</title>
+</head>
+<body>
+  <h1 id='title'></h1>
+  <ul>
+    <li><input id='db-set' type='button' value='set indexed db record' /></li>
+    <li><input id='db-clear' type='button' value='clear indexed db record' /></li>
+    <li>
+      <input id='db-get' type='button' value='get current indexed db record value' />
+      <input id='db-value' type='text' style='width:200px;' />
+    </li>
+  </ul>
+  <script type='text/javascript'>
+
+    window.onload = function() {
+      var indexedDb = window.indexedDB || window.webkitIndexedDB;
+      var dbName = "test_db";
+      var dbVersion = 1;
+      var storeIndex = "key";
+      var storeName = "test-store";
+
+      var db = null;
+
+      function getStoreObject() {
+        const transaction = db.transaction(storeName, 'readwrite');
+        return transaction.objectStore(storeName);
+      }
+
+      (function init(){
+        var request = indexedDb.open(dbName, dbVersion);
+        request.onupgradeneeded = (e) => {
+          var store = e.target.result.createObjectStore(storeName, { keyPath: storeIndex });
+          store.createIndex(storeIndex, storeIndex, { unique: true });
+        };
+        request.onsuccess = (e) => { db = e.target.result; };
+        request.onerror = (e) => console.log(e);
+      })();
+
+      document.getElementById('db-set').onclick = function() {
+        var store = getStoreObject();
+        var request = store.put({ key: "saved_time", value: new Date().getTime() });
+        request.onsuccess = (e) => console.log("db-set succeeded");
+        request.onerror = (e) => console.log("db-set failed");
+      };
+      document.getElementById('db-clear').onclick = function() {
+        var store = getStoreObject();
+        var request = store.delete("saved_time");
+        request.onsuccess = (e) => console.log("db-clear succeeded");
+        request.onerror = (e) => console.log("db-clear failed");
+      };
+      document.getElementById('db-get').onclick = function() {
+        var store = getStoreObject();
+        var request = store.get("saved_time");
+        request.onsuccess = (e) => {
+          document.getElementById('db-value').value = e.target.result ? e.target.result.value : "";
+        };
+      };
+    };
+  </script>
+</body>
+</html>

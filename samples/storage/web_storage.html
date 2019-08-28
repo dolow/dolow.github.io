@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>video</title>
+</head>
+<body>
+  <h1 id='title'></h1>
+  <ul>
+    <li><input id='session-storage-set' type='button' value='set session storage' /></li>
+    <li><input id='session-storage-clear' type='button' value='clear session storage' /></li>
+    <li>
+      <input id='session-storage-get' type='button' value='get current session storage value' />
+      <input id='session-storage-value' type='text' style='width:200px;' />
+    </li>
+  </ul>
+  <ul>
+    <li><input id='local-storage-set' type='button' value='set local storage' /></li>
+    <li><input id='local-storage-clear' type='button' value='clear local storage' /></li>
+    <li>
+      <input id='local-storage-get' type='button' value='get current local storage value' />
+      <input id='local-storage-value' type='text' style='width:200px;' />
+    </li>
+  </ul>
+  <script type='text/javascript'>
+    window.onload = function() {
+      document.getElementById('session-storage-set').onclick = function() {
+        window.sessionStorage.setItem("saved_time", new Date().getTime());
+      };
+      document.getElementById('session-storage-clear').onclick = function() {
+        window.sessionStorage.removeItem("saved_time");
+      };
+      document.getElementById('session-storage-get').onclick = function() {
+        document.getElementById('session-storage-value').value = window.sessionStorage.getItem("saved_time");;
+      };
+
+      document.getElementById('local-storage-set').onclick = function() {
+        window.localStorage.setItem("saved_time", new Date().getTime());
+      };
+      document.getElementById('local-storage-clear').onclick = function() {
+        window.localStorage.removeItem("saved_time");
+      };
+      document.getElementById('local-storage-get').onclick = function() {
+        document.getElementById('local-storage-value').value = window.localStorage.getItem("saved_time");;
+      };
+    };
+  </script>
+</body>
+</html>

@@ -17,7 +17,11 @@
   <script type='text/javascript'>
     window.onload = function() {
       document.getElementById('cookie-set').onclick = function() {
-        document.cookie = "saved_time=" + new Date().getTime();
+        var now = new Date();
+        var expires = new Date();
+        expires.setTime(now.getTime() + 1000 * 60 * 60 * 24 * 90);
+        console.log(now.getTime(), expires.toGMTString());
+        document.cookie = "saved_time=" + now.getTime() + "; expires=" + expires.toGMTString();
       };
       document.getElementById('cookie-clear').onclick = function() {
         var kvs = document.cookie.split('; ');

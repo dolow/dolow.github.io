@@ -5,17 +5,17 @@
 		<link rel="icon" href="./favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		
-		<link href="./_app/immutable/assets/2.CSLur6Lm.css" rel="stylesheet">
-		<link rel="modulepreload" href="./_app/immutable/entry/start.BQoQNPOn.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/entry.CNdaqBkc.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/runtime.DV6Je3wf.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/index-client.DcS6zYs2.js">
-		<link rel="modulepreload" href="./_app/immutable/entry/app.B-TlvQqi.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/render.BFG97Yj9.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/disclose-version.C6NFzlM4.js">
-		<link rel="modulepreload" href="./_app/immutable/chunks/if.5fgGgsDa.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/0.BNQ9b-ZP.js">
-		<link rel="modulepreload" href="./_app/immutable/nodes/2.CyeFSpqf.js">
+		<link href="./app/immutable/assets/2.CSLur6Lm.css" rel="stylesheet">
+		<link rel="modulepreload" href="./app/immutable/entry/start.BQoQNPOn.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/entry.CNdaqBkc.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/runtime.DV6Je3wf.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/index-client.DcS6zYs2.js">
+		<link rel="modulepreload" href="./app/immutable/entry/app.B-TlvQqi.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/render.BFG97Yj9.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/disclose-version.C6NFzlM4.js">
+		<link rel="modulepreload" href="./app/immutable/chunks/if.5fgGgsDa.js">
+		<link rel="modulepreload" href="./app/immutable/nodes/0.BNQ9b-ZP.js">
+		<link rel="modulepreload" href="./app/immutable/nodes/2.CyeFSpqf.js">
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents"><!--[--><!--[--><!----><!----><div><h1>cluster の特定のユーザーのイベントだけ表示する君</h1> <div id="registerUser"><div><span>ユーザー追加</span> <input type="text" id="profileUrl" placeholder="https://cluster.mu/u/xxxxxxxx" value="" class="svelte-1q0zsg4"> <input type="submit" id="register" value="Add"></div> <div><span class="notice svelte-1q0zsg4">プロフィールページの URL を入力してください<br> 削除する時は Cookie を削除してください</span></div></div> <!--[--><!--]--></div><!----><!----><!----><!--]--> <!--[!--><!--]--><!--]-->
@@ -29,8 +29,8 @@
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("./_app/immutable/entry/start.BQoQNPOn.js"),
-						import("./_app/immutable/entry/app.B-TlvQqi.js")
+						import("./app/immutable/entry/start.BQoQNPOn.js"),
+						import("./app/immutable/entry/app.B-TlvQqi.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element, {
 							node_ids: [0, 2],
